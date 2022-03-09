@@ -7,10 +7,23 @@
     "require": {
         "php": "^8.0",
         "fruitcake/laravel-cors": "^2.0.5",
+        "goldspecdigital/laravel-eloquent-uuid": "^9.0",
         "guzzlehttp/guzzle": "^7.2",
+        "lab404/laravel-impersonate": "^1.7",
         "laravel/framework": "^9.0",
+        "laravel/jetstream": "^2.6",
         "laravel/sanctum": "^2.14",
-        "laravel/tinker": "^2.7"
+        "laravel/tinker": "^2.7",
+        "laravel/vapor-cli": "^1.36",
+        "laravel/vapor-core": "^2.21",
+        "league/flysystem-aws-s3-v3": "^3.0",
+        "lorisleiva/laravel-actions": "^2.4",
+        "maatwebsite/excel": "^3.1",
+        "mailgun/mailgun-php": "^3.5",
+        "predis/predis": "^1.1",
+        "silber/bouncer": "^1.0",
+        "spatie/laravel-event-sourcing": "^7.2",
+        "twilio/sdk": "^6.35"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",
