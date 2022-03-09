@@ -46,5 +46,18 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
+    public function details()
+    {
+        return $this->hasMany('App\Models\UserDetails', 'user_id', 'id');
+    }
 
+    public function detail()
+    {
+        return $this->hasOne('App\Models\UserDetails', 'user_id', 'id');
+    }
+
+    public function associated_client()
+    {
+        return $this->detail()->where('name', '=', 'associated_client');
+    }
 }

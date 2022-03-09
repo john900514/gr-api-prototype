@@ -17,3 +17,11 @@ use Illuminate\Support\Facades\Route;
 Route::middleware(['auth:sanctum', 'can-access'])->get('/user', function (Request $request) {
     return $request->user()->toArray();
 });
+
+Route::middleware(['auth:sanctum', 'can-access'])->group(function() {
+    Route::prefix('customers')->group(function() {
+        Route::prefix('leads')->group(function() {
+            Route::post('/', \App\Http\Controllers\Customers\Leads\LeadIntakeController::class."@create");
+        });
+    });
+});
