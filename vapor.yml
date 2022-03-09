@@ -1,0 +1,47 @@
+id: 29084
+name: grp-api
+environments:
+    production:
+        domain: gapi.capeandbay.com
+        memory: 1024
+        cli-memory: 512
+        runtime: docker
+        cache: gr-prototype
+        storage: gymrevenue-p
+        database: gymrevenue
+        queues:
+            - gapi-production-events
+            - gapi-production-jobs
+        build:
+            - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install --no-dev'
+            - 'php artisan event:cache'
+    staging:
+        domain: gapi-stage.capeandbay.com
+        memory: 1024
+        cli-memory: 512
+        database: mango
+        cache: gr-prototype
+        cli-timeout: 900
+        storage: gymrevenue-dev
+        runtime: docker
+        queues:
+            - gapi-staging-events
+            - gapi-staging-jobs
+        build:
+            - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install'
+            - 'php artisan event:cache'
+    develop:
+        domain: gapi-dev.capeandbay.com
+        memory: 1024
+        cli-memory: 512
+        database: mango
+        cache: gr-prototype
+        cli-timeout: 900
+        storage: gymrevenue-dev
+        runtime: docker
+        queues:
+            - gapi-develop-events
+            - gapi-develop-jobs
+        build:
+            - 'COMPOSER_MIRROR_PATH_REPOS=1 composer install'
+            - 'php artisan event:cache'
