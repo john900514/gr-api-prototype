@@ -27,7 +27,7 @@ class APITokenSeeder extends Seeder
                 try {
                     VarDumper::dump($user->name.'- Verifying.');
 
-                    $aggy = UserAggregate::retrieve($user->id)
+                    UserAggregate::retrieve($user->id)
                         ->grantAccessToken()
                         ->persist();
 

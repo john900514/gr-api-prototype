@@ -22,11 +22,15 @@ class RedirectIfAuthenticated
         $guards = empty($guards) ? [null] : $guards;
 
         foreach ($guards as $guard) {
-            if (Auth::guard($guard)->check()) {
-                return redirect(RouteServiceProvider::HOME);
+            if($guard == 'web')
+            {
+                return response('Access Denied', 401);
+            }
+            else if (Auth::guard($guard)->check()) {
+                return $next($request);
             }
         }
 
-        return $next($request);
+        return response('Access Denied', 500);
     }
 }
