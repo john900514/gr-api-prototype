@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('trufit_utm_templates', function (Blueprint $table){
+        Schema::create('utms', function (Blueprint $table){
             $table->uuid('id')->unique()->primary();
             $table->uuid('client_id');
             $table->uuid('utm_template_id')->nullable();
@@ -37,6 +37,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('trufit_utm_templates');
+        Schema::dropIfExists('utms');
     }
 };
