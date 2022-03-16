@@ -2,6 +2,7 @@
 
 namespace App\Projectors\Endusers;
 
+use App\Jobs\Clients\Reporting\AssimilateLeadIntoReporting;
 use App\Models\Clients\Features\CommAudience;
 use App\Models\Clients\Features\Memberships\TrialMembershipType;
 use App\Models\Endusers\AudienceMember;
@@ -10,6 +11,7 @@ use App\Models\Endusers\LeadDetails;
 use App\Models\Endusers\TrialMembership;
 use App\Models\Note;
 use App\Models\User;
+use App\StorableEvents\Endusers\AdditionalLeadIntakeCaptured;
 use App\StorableEvents\Endusers\AgreementNumberCreatedForLead;
 use App\StorableEvents\Endusers\LeadClaimedByRep;
 use App\StorableEvents\Endusers\LeadDetailUpdated;
@@ -35,12 +37,22 @@ class EndUserActivityProjector extends Projector
             return in_array($key, (new Lead)->getFillable());
         }, ARRAY_FILTER_USE_KEY);
         $lead = Lead::create($lead_table_data);
+        $lead->update(['id' => $event->id]);
 
         LeadDetails::create([
             'lead_id' => $lead->id,
             'client_id' => $lead->client_id,
             'field' => 'created',
             'value' => $lead->created_at
+        ]);
+
+        // Intake Activity is used to track if a lead was already created and was captured again later
+        LeadDetails::create([
+            'lead_id' => $lead->id,
+            'client_id' => $lead->client_id,
+            'field' => 'intake-activity',
+            'value' => $lead->created_at,
+            'misc' => $event->lead
         ]);
 
         LeadDetails::create([
@@ -60,6 +72,7 @@ class EndUserActivityProjector extends Projector
             );
         }
 
+        // @todo - deprecated, should remove soon
         foreach ($event->lead['services'] ?? [] as $service_id) {
             LeadDetails::create([
                     'lead_id' => $event->aggregateRootUuid(),
@@ -69,6 +82,41 @@ class EndUserActivityProjector extends Projector
                 ]
             );
         }
+
+        // From here we will queue and dispatch a job that will process
+        // the lead with Client Reporting
+        AssimilateLeadIntoReporting::dispatch(
+            $lead->client_id, $lead->id, $event->lead['gr_location_id'],
+            $event->lead['lead_source_id'], $event->lead['lead_type_id'],
+            $event->lead['utm'] ?? []
+        )->onQueue('gapi-'.env('APP_ENV').'-jobs');
+    }
+
+    public function onAdditionalLeadIntakeCaptured(AdditionalLeadIntakeCaptured $event)
+    {
+        /**
+         * NOTE! - Because this is a lead being captured again, and not a lead's data being updated,
+         * it doesn't matter if the lead's data is different than in the record. Just log it and
+         * send it to reporting.
+         */
+        $lead = Lead::find($event->id);
+        // Intake Activity is used to track if a lead was already created and was captured again later
+        LeadDetails::create([
+            'lead_id' => $lead->id,
+            'client_id' => $lead->client_id,
+            'field' => 'intake-activity',
+            'value' => $lead->created_at,
+            'misc' => $event->lead
+        ]);
+
+        // From here we will queue and dispatch a job that will process
+        // the lead with Client Reporting
+        AssimilateLeadIntoReporting::dispatch(
+            $lead->client_id, $lead->id, $event->lead['gr_location_id'],
+            $event->lead['lead_source_id'], $event->lead['lead_type_id'],
+            $event->lead['utm'] ?? []
+        )->onQueue('gapi-'.env('APP_ENV').'-jobs');
+
     }
 
     public function onManualLeadMade(ManualLeadMade $event)

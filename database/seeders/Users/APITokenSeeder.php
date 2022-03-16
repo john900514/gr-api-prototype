@@ -19,6 +19,7 @@ class APITokenSeeder extends Seeder
      */
     public function run()
     {
+        // This is where we will assign API access tokens to worthy users
         $users = User::all();
         if(count($users) > 0)
         {

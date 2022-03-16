@@ -9,6 +9,7 @@ environments:
         cache: gr-prototype
         storage: gymrevenue-p
         database: gymrevenue
+        queue_concurrency: 1
         queues:
             - gapi-production-events
             - gapi-production-jobs
@@ -24,6 +25,7 @@ environments:
         cli-timeout: 900
         storage: gymrevenue-dev
         runtime: docker
+        queue_concurrency: 1
         queues:
             - gapi-staging-events
             - gapi-staging-jobs
@@ -39,6 +41,7 @@ environments:
         cli-timeout: 900
         storage: gymrevenue-dev
         runtime: docker
+        queue_concurrency: 1
         queues:
             - gapi-develop-events
             - gapi-develop-jobs

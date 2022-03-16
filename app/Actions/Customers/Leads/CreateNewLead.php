@@ -14,6 +14,12 @@ class CreateNewLead
     public function handle(string $client_id, array $prospect_data)
     {
         $results = false;
+        // @todo - check if the lead already exists. If so, return the UpdateExistingLead action instead
+        $existing_lead = Lead::whereClientId($client_id)->whereEmail($prospect_data['email'])->first();
+        if(!is_null($existing_lead))
+        {
+            return AdditionalIntakeToExistingLead::run($client_id, $existing_lead->id, $prospect_data);
+        }
 
         // Generate a UUID4
         $new_lead_id = Uuid::uuid4()->toString();
@@ -31,7 +37,9 @@ class CreateNewLead
             'lead_type_id' => $prospect_data['type_id'],
             'lead_source_id' => $prospect_data['source_id']
         ];
-        // // Call the EndUserActivityAggregate and persists create New Lead
+
+        // @todo - insert UTM, if in the request, here
+        // Call the EndUserActivityAggregate and persists create New Lead
         try {
             $aggy = EndUserActivityAggregate::retrieve($new_lead_id)
                 ->createNewLead($payload);

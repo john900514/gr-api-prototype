@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use Database\Seeders\Clients\ClientAPIReportingSetupSeeder;
 use Database\Seeders\Users\APITokenSeeder;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -16,8 +17,8 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        // This is where we will assign API access tokens to worthy users
-        VarDumper::dump('Setting the initial app state');
+        VarDumper::dump('Seeding the DB with API-level dataz');
         $this->call(APITokenSeeder::class);
+        $this->call(ClientAPIReportingSetupSeeder::class);
     }
 }
