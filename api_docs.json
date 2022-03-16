@@ -1,0 +1,401 @@
+{
+	"info": {
+		"_postman_id": "fa49229e-1245-4691-a092-677695c3de94",
+		"name": "GymRevenue Prototype API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Leads",
+			"item": [
+				{
+					"name": "Create New Lead",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "1|UyC0x1CjcPpl2uBBk42u7yFPgD8UBEjfeNjD6R04",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"account\": \"16fe0ffe-2199-4db6-b178-e369491b0a8e\",\n    \"prospect\": {\n        \"first_name\": \"Test11\",\n        \"last_name\": \"Testerman11\",\n        \"email\": \"test11@capeandbay.com\",\n        \"club_id\": \"TKH001\",\n        \"source_id\": \"7c0e045f-1298-4330-91e4-7068a2ed4395\",\n        \"type_id\": \"3\"\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "127.0.0.1:8000/api/customers/leads",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"customers",
+								"leads"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Reporting",
+			"item": [
+				{
+					"name": "Leads",
+					"item": [
+						{
+							"name": "Get Total Unique Leads Count",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "1|UyC0x1CjcPpl2uBBk42u7yFPgD8UBEjfeNjD6R04",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"account\": \"16fe0ffe-2199-4db6-b178-e369491b0a8e\",\n    \"prospect\": {\n        \"first_name\": \"Test11\",\n        \"last_name\": \"Testerman11\",\n        \"email\": \"test11@capeandbay.com\",\n        \"club_id\": \"TKH001\",\n        \"source_id\": \"7c0e045f-1298-4330-91e4-7068a2ed4395\",\n        \"type_id\": \"3\"\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "127.0.0.1:8000/api/reporting/leads?account=16fe0ffe-2199-4db6-b178-e369491b0a8e&detailed=true",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"api",
+										"reporting",
+										"leads"
+									],
+									"query": [
+										{
+											"key": "account",
+											"value": "16fe0ffe-2199-4db6-b178-e369491b0a8e",
+											"description": "Account is required for verification and confirmation. The UUID of the client who's report is being requested."
+										},
+										{
+											"key": "detailed",
+											"value": "true",
+											"description": "optional. Adds lead info"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Total Daily Leads Count",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "1|UyC0x1CjcPpl2uBBk42u7yFPgD8UBEjfeNjD6R04",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "127.0.0.1:8000/api/reporting/leads/daily?account=16fe0ffe-2199-4db6-b178-e369491b0a8e&start_date=2022-03-01&end_date=2022-03-16&detailed=true",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"api",
+										"reporting",
+										"leads",
+										"daily"
+									],
+									"query": [
+										{
+											"key": "account",
+											"value": "16fe0ffe-2199-4db6-b178-e369491b0a8e",
+											"description": "Account is required for verification and confirmation. The UUID of the client who's report is being requested."
+										},
+										{
+											"key": "start_date",
+											"value": "2022-03-01",
+											"description": "optional"
+										},
+										{
+											"key": "end_date",
+											"value": "2022-03-16",
+											"description": "optional"
+										},
+										{
+											"key": "detailed",
+											"value": "true",
+											"description": "optional. Adds lead info"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Total Organic Leads Count",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "1|UyC0x1CjcPpl2uBBk42u7yFPgD8UBEjfeNjD6R04",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "127.0.0.1:8000/api/reporting/leads/organic?account=16fe0ffe-2199-4db6-b178-e369491b0a8e&start_date=2022-03-16&end_date=2022-03-16&detailed=true",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"api",
+										"reporting",
+										"leads",
+										"organic"
+									],
+									"query": [
+										{
+											"key": "account",
+											"value": "16fe0ffe-2199-4db6-b178-e369491b0a8e",
+											"description": "Account is required for verification and confirmation. The UUID of the client who's report is being requested."
+										},
+										{
+											"key": "start_date",
+											"value": "2022-03-16",
+											"description": "optional"
+										},
+										{
+											"key": "end_date",
+											"value": "2022-03-16",
+											"description": "optional"
+										},
+										{
+											"key": "detailed",
+											"value": "true",
+											"description": "optional. Adds lead info"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Total UTM Leads Count",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "1|UyC0x1CjcPpl2uBBk42u7yFPgD8UBEjfeNjD6R04",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "127.0.0.1:8000/api/reporting/leads/utm?account=16fe0ffe-2199-4db6-b178-e369491b0a8e&start_date=2022-03-16&end_date=2022-03-16",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"api",
+										"reporting",
+										"leads",
+										"utm"
+									],
+									"query": [
+										{
+											"key": "account",
+											"value": "16fe0ffe-2199-4db6-b178-e369491b0a8e",
+											"description": "Account is required for verification and confirmation. The UUID of the client who's report is being requested."
+										},
+										{
+											"key": "start_date",
+											"value": "2022-03-16",
+											"description": "optional"
+										},
+										{
+											"key": "end_date",
+											"value": "2022-03-16",
+											"description": "optional"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Total Unique Leads Count By Location",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "1|UyC0x1CjcPpl2uBBk42u7yFPgD8UBEjfeNjD6R04",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"account\": \"16fe0ffe-2199-4db6-b178-e369491b0a8e\",\n    \"prospect\": {\n        \"first_name\": \"Test11\",\n        \"last_name\": \"Testerman11\",\n        \"email\": \"test11@capeandbay.com\",\n        \"club_id\": \"TKH001\",\n        \"source_id\": \"7c0e045f-1298-4330-91e4-7068a2ed4395\",\n        \"type_id\": \"3\"\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "127.0.0.1:8000/api/reporting/leads/locations?account=16fe0ffe-2199-4db6-b178-e369491b0a8e&detailed=false",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"api",
+										"reporting",
+										"leads",
+										"locations"
+									],
+									"query": [
+										{
+											"key": "account",
+											"value": "16fe0ffe-2199-4db6-b178-e369491b0a8e",
+											"description": "Account is required for verification and confirmation. The UUID of the client who's report is being requested."
+										},
+										{
+											"key": "detailed",
+											"value": "false",
+											"description": "optional. Adds lead info"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Total Daily Leads Count By Location",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "1|UyC0x1CjcPpl2uBBk42u7yFPgD8UBEjfeNjD6R04",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "127.0.0.1:8000/api/reporting/leads/daily/locations?account=16fe0ffe-2199-4db6-b178-e369491b0a8e&start_date=2022-03-01&end_date=2022-03-16&detailed=false",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"api",
+										"reporting",
+										"leads",
+										"daily",
+										"locations"
+									],
+									"query": [
+										{
+											"key": "account",
+											"value": "16fe0ffe-2199-4db6-b178-e369491b0a8e",
+											"description": "Account is required for verification and confirmation. The UUID of the client who's report is being requested."
+										},
+										{
+											"key": "start_date",
+											"value": "2022-03-01",
+											"description": "optional"
+										},
+										{
+											"key": "end_date",
+											"value": "2022-03-16",
+											"description": "optional"
+										},
+										{
+											"key": "detailed",
+											"value": "false",
+											"description": "optional. Adds lead info"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		}
+	]
+}
