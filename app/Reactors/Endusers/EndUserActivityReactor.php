@@ -43,7 +43,7 @@ class EndUserActivityReactor extends Reactor implements ShouldQueue
                 ]
             );
         }
-
+/*
         if(array_key_exists('middle_name', $event->lead)){
             $middle_name= $event->lead['middle_name'];
             LeadDetails::create([
@@ -55,7 +55,7 @@ class EndUserActivityReactor extends Reactor implements ShouldQueue
                 ]
             );
         }
-
+*/
 
         // @todo - dispatch a queued job that will apply that to all tracking reporting aggies.
 

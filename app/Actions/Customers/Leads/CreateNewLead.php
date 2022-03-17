@@ -29,6 +29,8 @@ class CreateNewLead
             'first_name' => $prospect_data['first_name'],
             'last_name' => $prospect_data['last_name'],
             'gender' => $prospect_data['gender'] ?? null,
+            'dob' => $prospect_data['dob'] ?? null,
+            'middle_name' => $prospect_data['middle_name'] ?? null,
             'email' => $prospect_data['email'],
             'primary_phone' => $prospect_data['phone'] ?? null,
             'alternate_phone' => $prospect_data['alt_phone'] ?? null,

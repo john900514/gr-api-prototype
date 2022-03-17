@@ -54,19 +54,35 @@ class EndUserActivityProjector extends Projector
             'value' => $lead->created_at,
             'misc' => $event->lead
         ]);
-        LeadDetails::create([
-            'lead_id' => $lead->id,
-            'client_id' => $lead->client_id,
-            'field' => 'agreement_number',
-            'value' => floor(time()-99999999),
-        ]);
+
         LeadDetails::create([
             'lead_id' => $event->id,
             'client_id' => $lead->client_id,
             'field' => 'agreement_number',
             'value' => floor(time()-99999999),
         ]);
-
+    if(!is_null($event->lead['dob'])) {
+       LeadDetails::create([
+           'lead_id' => $lead->id,
+           'client_id' => $lead->client_id,
+           'field' => 'dob',
+           'value' => $event->lead['dob'],
+       ]);
+     }
+     if(!is_null($event->lead['middle_name'])) {
+       LeadDetails::create([
+           'lead_id' => $lead->id,
+           'client_id' => $lead->client_id,
+           'field' => 'middle_name',
+           'value' => $event->lead['middle_name'],
+       ]);
+     }
+        LeadDetails::create([
+            'lead_id' => $lead->id,
+            'client_id' => $lead->client_id,
+            'field' => 'opportunity',
+            'value' => 'High'
+        ]);
         foreach ($event->lead['details'] ?? [] as $field => $value) {
             LeadDetails::create([
                     'lead_id' => $event->aggregateRootUuid(),
@@ -114,6 +130,9 @@ class EndUserActivityProjector extends Projector
             'misc' => $event->lead
         ]);
 
+
+
+
         // From here we will queue and dispatch a job that will process
         // the lead with Client Reporting
         AssimilateLeadIntoReporting::dispatch(
@@ -144,6 +163,14 @@ class EndUserActivityProjector extends Projector
             'client_id' => $event->lead['client_id'],
             'field' => 'agreement_number',
             'value' => floor(time()-99999999),
+        ]);
+
+        LeadDetails::create([
+            'lead_id' => $lead->id,
+            'client_id' => $lead->client_id,
+            'field' => 'dob',
+            'value' => $event->dob,
+            'misc' => [$event]
         ]);
     }
 

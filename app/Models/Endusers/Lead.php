@@ -20,7 +20,7 @@ class Lead extends Model
 
     public $incrementing = false;
 
-    protected $fillable = ['id', 'client_id', 'first_name', 'last_name', 'gender', 'email', 'primary_phone', 'alternate_phone', 'gr_location_id', 'ip_address', 'lead_type_id', 'lead_source_id', 'membership_type_id', 'lead_source_id'];
+    protected $fillable = ['id', 'client_id', 'first_name', 'last_name', 'gender',  'email', 'primary_phone', 'alternate_phone', 'gr_location_id', 'ip_address', 'lead_type_id', 'lead_source_id', 'membership_type_id', 'lead_source_id'];
 
     public function details()
     {
