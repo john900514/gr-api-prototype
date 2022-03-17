@@ -54,7 +54,12 @@ class EndUserActivityProjector extends Projector
             'value' => $lead->created_at,
             'misc' => $event->lead
         ]);
-
+        LeadDetails::create([
+            'lead_id' => $lead->id,
+            'client_id' => $lead->client_id,
+            'field' => 'agreement_number',
+            'value' => floor(time()-99999999),
+        ]);
         LeadDetails::create([
             'lead_id' => $event->id,
             'client_id' => $lead->client_id,
