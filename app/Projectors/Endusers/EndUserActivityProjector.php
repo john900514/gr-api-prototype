@@ -83,6 +83,16 @@ class EndUserActivityProjector extends Projector
             'field' => 'opportunity',
             'value' => 'High'
         ]);
+
+
+     if(!is_null($event->lead['owner_id'])){
+       LeadDetails::create([
+            'lead_id' => $lead->id,
+            'client_id' => $lead->client_id,
+            'field' => 'claimed',
+            'value' => $event->lead['owner_id'],
+       ]);
+     }
         foreach ($event->lead['details'] ?? [] as $field => $value) {
             LeadDetails::create([
                     'lead_id' => $event->aggregateRootUuid(),
