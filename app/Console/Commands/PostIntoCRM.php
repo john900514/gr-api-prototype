@@ -34,8 +34,7 @@ class PostIntoCRM extends Command
      */
     public function handle()
     {
-  //      return 0;
-
+        //      return 0;
 
 
         // Get all the Clients
@@ -46,7 +45,7 @@ class PostIntoCRM extends Command
             ->with('trial_membership_types')
             ->get();
 
- //       var_dump($clients);
+        //       var_dump($clients);
         if (count($clients) > 0) {
             foreach ($clients as $client) {
                 // For each client, get all the locations
@@ -70,10 +69,10 @@ class PostIntoCRM extends Command
                             // For each fake user, run them through the EnduserActivityAggregate
                             $aggy = EndUserActivityAggregate::retrieve($prospect->id);
                             $prospect_data = $prospect->toArray();
-                            $date_range = mt_rand(1262055681,1262215681);
+                            $date_range = mt_rand(1262055681, 1262215681);
                             //generate details
                             $prospect_data['details'] = [
-                                'opportunity' => ['Low', 'Medium', 'High'][rand(0,2)],
+                                'opportunity' => ['Low', 'Medium', 'High'][rand(0, 2)],
                                 'dob' => date("Y-m-d H:i:s", $date_range),
                             ];
                             $aggy->createNewLead($prospect_data)
@@ -108,14 +107,5 @@ class PostIntoCRM extends Command
                 }
             }
         }
-
-
-
-
-
-
-
-
-
-}
+    }
 }

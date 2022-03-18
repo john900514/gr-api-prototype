@@ -59,24 +59,24 @@ class EndUserActivityProjector extends Projector
             'lead_id' => $event->id,
             'client_id' => $lead->client_id,
             'field' => 'agreement_number',
-            'value' => floor(time()-99999999),
+            'value' => floor(time() - 99999999),
         ]);
-    if(!is_null($event->lead['dob'])) {
-       LeadDetails::create([
-           'lead_id' => $lead->id,
-           'client_id' => $lead->client_id,
-           'field' => 'dob',
-           'value' => $event->lead['dob'],
-       ]);
-     }
-     if(!is_null($event->lead['middle_name'])) {
-       LeadDetails::create([
-           'lead_id' => $lead->id,
-           'client_id' => $lead->client_id,
-           'field' => 'middle_name',
-           'value' => $event->lead['middle_name'],
-       ]);
-     }
+        if (!is_null($event->lead['dob'])) {
+            LeadDetails::create([
+                'lead_id' => $lead->id,
+                'client_id' => $lead->client_id,
+                'field' => 'dob',
+                'value' => $event->lead['dob'],
+            ]);
+        }
+        if (!is_null($event->lead['middle_name'])) {
+            LeadDetails::create([
+                'lead_id' => $lead->id,
+                'client_id' => $lead->client_id,
+                'field' => 'middle_name',
+                'value' => $event->lead['middle_name'],
+            ]);
+        }
         LeadDetails::create([
             'lead_id' => $lead->id,
             'client_id' => $lead->client_id,
@@ -85,23 +85,23 @@ class EndUserActivityProjector extends Projector
         ]);
 
 
-     if(!is_null($event->lead['owner_id'])){
-       LeadDetails::create([
-            'lead_id' => $lead->id,
-            'client_id' => $lead->client_id,
-            'field' => 'claimed',
-            'value' => $event->lead['owner_id'],
-       ]);
-     }
-     if(!is_null($event->lead['misc'])){
-       LeadDetails::create([
-            'lead_id' => $lead->id,
-            'client_id' => $lead->client_id,
-            'field' => 'misc-props',
-            'value' => $event->lead['misc'],
-       ]);
-     }
-
+        if (!is_null($event->lead['owner_id'])) {
+            LeadDetails::create([
+                'lead_id' => $lead->id,
+                'client_id' => $lead->client_id,
+                'field' => 'claimed',
+                'value' => $event->lead['owner_id'],
+            ]);
+        }
+        if (!is_null($event->lead['misc'])) {
+            $created = LeadDetails::create([
+                'lead_id' => $lead->id,
+                'client_id' => $lead->client_id,
+                'field' => 'misc-props',
+                'value' => $event->lead['misc'],
+            ]);
+            var_dump($created->toArray());exit;
+        }
 
 
         foreach ($event->lead['details'] ?? [] as $field => $value) {
@@ -131,7 +131,7 @@ class EndUserActivityProjector extends Projector
             $lead->client_id, $lead->id, $event->lead['gr_location_id'],
             $event->lead['lead_source_id'], $event->lead['lead_type_id'],
             $event->lead['utm'] ?? []
-        )->onQueue('gapi-'.env('APP_ENV').'-jobs');
+        )->onQueue('gapi-' . env('APP_ENV') . '-jobs');
     }
 
     public function onAdditionalLeadIntakeCaptured(AdditionalLeadIntakeCaptured $event)
@@ -152,15 +152,13 @@ class EndUserActivityProjector extends Projector
         ]);
 
 
-
-
         // From here we will queue and dispatch a job that will process
         // the lead with Client Reporting
         AssimilateLeadIntoReporting::dispatch(
             $lead->client_id, $lead->id, $event->lead['gr_location_id'],
             $event->lead['lead_source_id'], $event->lead['lead_type_id'],
             $event->lead['utm'] ?? []
-        )->onQueue('gapi-'.env('APP_ENV').'-jobs');
+        )->onQueue('gapi-' . env('APP_ENV') . '-jobs');
 
     }
 
@@ -183,7 +181,7 @@ class EndUserActivityProjector extends Projector
             'lead_id' => $event->id,
             'client_id' => $event->lead['client_id'],
             'field' => 'agreement_number',
-            'value' => floor(time()-99999999),
+            'value' => floor(time() - 99999999),
         ]);
 
         LeadDetails::create([
@@ -199,7 +197,7 @@ class EndUserActivityProjector extends Projector
     {
         $detail = LeadDetails::firstOrCreate([
             'lead_id' => $event->lead,
-            'client_id' =>  $event->client,
+            'client_id' => $event->client,
             'field' => $event->key,
         ]);
 
@@ -209,7 +207,8 @@ class EndUserActivityProjector extends Projector
         $detail->save();
     }
 
-    public function onAgreementNumberCreatedForLead(AgreementNumberCreatedForLead $event){
+    public function onAgreementNumberCreatedForLead(AgreementNumberCreatedForLead $event)
+    {
         LeadDetails::create([
             'lead_id' => $event->id,
             'client_id' => $event->client,
@@ -226,10 +225,10 @@ class EndUserActivityProjector extends Projector
         $lead->updateOrFail($event->lead);
 
         $notes = $event->lead['notes'] ?? false;
-        if($notes){
+        if ($notes) {
             Note::create([
-                'entity_id'=> $event->id,
-                'entity_type'=> Lead::class,
+                'entity_id' => $event->id,
+                'entity_type' => Lead::class,
                 'note' => $notes,
                 'created_by_user_id' => $event->user
             ]);
@@ -340,10 +339,10 @@ class EndUserActivityProjector extends Projector
         ]);
 
         $notes = $misc['notes'] ?? false;
-        if($notes){
+        if ($notes) {
             Note::create([
-                'entity_id'=> $event->lead,
-                'entity_type'=> Lead::class,
+                'entity_id' => $event->lead,
+                'entity_type' => Lead::class,
                 'note' => $notes,
                 'created_by_user_id' => $event->user
             ]);
