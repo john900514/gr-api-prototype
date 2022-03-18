@@ -175,7 +175,11 @@ Postman export of localhost
 {
 	"info": {
 		"_postman_id": "827b8ae5-d671-4684-9f3f-39b592d75838",
+<<<<<<< HEAD
 		"name": "API-PostLeads",
+=======
+		"name": "http://127.0.0.1:8000",
+>>>>>>> 70bc11f300be044ff03878f73b942c1d52f94d96
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
