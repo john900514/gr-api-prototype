@@ -41,7 +41,7 @@ class LeadIntakeController extends Controller
             'prospect.club_id'    => 'bail|required|exists:locations,gymrevenue_id',
             'prospect.source_id'  => 'bail|required|exists:lead_sources,id',
             'prospect.type_id'    => 'bail|required|exists:lead_types,id',
-            'prospect.owner_id'   => 'sometimes|required|exists:user,id',
+            'prospect.owner_id'   => 'sometimes|required|exists:users,id',
             'utm'                 => 'sometimes|required|array',
         ];
 
