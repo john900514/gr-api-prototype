@@ -97,7 +97,7 @@ class EndUserActivityProjector extends Projector
        LeadDetails::create([
             'lead_id' => $lead->id,
             'client_id' => $lead->client_id,
-            'field' => 'misc',
+            'field' => 'misc-props',
             'value' => $event->lead['misc'],
        ]);
      }
