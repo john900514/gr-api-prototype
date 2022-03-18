@@ -29,6 +29,7 @@ class LeadIntakeController extends Controller
             'prospect'            => 'bail|required|array',
             'prospect.first_name' => 'bail|required',
             'prospect.middle_name'=> 'sometimes|required',
+            'prospect.misc'       =>  'sometimes',
             'prospect.last_name'  => 'bail|required',
             'prospect.email'      => 'bail|required',
             'prospect.phone'      => 'sometimes|required',

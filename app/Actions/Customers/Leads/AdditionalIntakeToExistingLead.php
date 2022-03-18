@@ -25,6 +25,7 @@ class AdditionalIntakeToExistingLead
                 'gender' => $prospect_data['gender'] ?? null,
                 'dob' => $prospect_data['dob'] ?? null,
                 'middle_name' => $prospect_data['middle_name'] ?? null,
+                'misc' => $prospect_data['misc'] ?? null,
                 'owner_id' => $prospect_data['owner_id'] ?? null,
                 'email' => $prospect_data['email'],
                 'primary_phone' => $prospect_data['phone'] ?? null,
