@@ -1,0 +1,333 @@
+
+The following are Needed before getting started
+{Api-Token} {Client_id} {gymrevenue_id} {Lead_Source_id} {Lead_Type_id}
+
+User_API_Token  = This is given per account to authorized user Only "currently given to C&B Admin as well as Account Owners"
+
+REQUEST :
+                 Using URI  api/user to get an auth = OK
+GET api/user                  Bearer :{API-Token}
+                 The Lead can now be submitted
+POST api/customers/leads
+                                      {Client_id} {Lead_Source_id} {gymrevenue_id} {Lead_Type_id}
+
+
+
+GET api/user                  Bearer :{API-Token}
+POST api/customers/leads
+
+Required Parameters
+                                account = {Client_id}
+                      prospect[club_id] = {gymrevenue_id}     values needed are the gymrevenue_id from active locations for the client_id
+                       prospect[source] = {Lead_Source_id}    values needed are the ID of the source i.e. facebook - walk-in - guest-pass etc.
+                      prospect[type_id] = {Lead_Type_id}      values needed are the ID of the Lead Type where client_id  i.e. manual_create - free_trial - grand_opening etc.
+
+Required Parameters  to Post
+                   prospect[first_name] =
+                    prospect[last_name] =
+                        prospect[email] =
+                        prospect[phone] =
+                     prospect[address1] =
+
+Optional Parameters  to Post
+                          prospect[dob] = mm/dd/yyyy
+                  prospect[middle_name] =
+                  prospect[owner_id]    = 
+                  prospect[gender]      =  male/female
+
+
+
+
+
+
+
+
+
+
+
+The Following json was provided by export of postman after a successful push of a lead to develop server
+
+{
+	"info": {
+		"_postman_id": "f188f5a1-9be8-4997-a78c-f3ac33c3e280",
+		"name": "gapi-dev.capeandbay.com",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "/api/user - authorizeed user per api-token",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "gapi-dev.capeandbay.com/api/user",
+					"host": [
+						"gapi-dev",
+						"capeandbay",
+						"com"
+					],
+					"path": [
+						"api",
+						"user"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/api/customers/leads - Post Lead after user is authorized per api-token",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "gapi-dev.capeandbay.com/api/customers/leads?account=85a45fc7-744a-4c07-aca7-d03d60308366&prospect[first_name]=Steve2&prospect[last_name]=Tester2&prospect[email]=Some2@gmail.com&prospect[club_id]=IHO003&prospect[type_id]=41&prospect[phone]=3334445656&prospect[address1]=123manst&prospect[source_id]=24098713-d1e4-40d5-8b8d-ddfd3d13bf12",
+					"host": [
+						"gapi-dev",
+						"capeandbay",
+						"com"
+					],
+					"path": [
+						"api",
+						"customers",
+						"leads"
+					],
+					"query": [
+						{
+							"key": "account",
+							"value": "85a45fc7-744a-4c07-aca7-d03d60308366"
+						},
+						{
+							"key": "prospect[first_name]",
+							"value": "Steve2"
+						},
+						{
+							"key": "prospect[last_name]",
+							"value": "Tester2"
+						},
+						{
+							"key": "prospect[email]",
+							"value": "Some2@gmail.com"
+						},
+						{
+							"key": "prospect[club_id]",
+							"value": "IHO003"
+						},
+						{
+							"key": "prospect[type_id]",
+							"value": "41"
+						},
+						{
+							"key": "prospect[phone]",
+							"value": "3334445656"
+						},
+						{
+							"key": "prospect[address1]",
+							"value": "123manst"
+						},
+						{
+							"key": "prospect[source_id]",
+							"value": "24098713-d1e4-40d5-8b8d-ddfd3d13bf12"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "17|jbDaQrLmpR6IaC9ZAK7Rz49whudmFhKbV80fcjR7",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
+
+
+
+---------------------------------------------------------
+Postman export of localhost
+
+
+{
+	"info": {
+		"_postman_id": "827b8ae5-d671-4684-9f3f-39b592d75838",
+		"name": "http://127.0.0.1:8000",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "/api/user",
+			"protocolProfileBehavior": {
+				"strictSSL": false
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/user",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"user"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/api/customers/leads",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/customers/leads?account=31d896b2-996d-4abd-8d38-a69836a06ea1&prospect[first_name]=robert1&prospect[last_name]=roy21&prospect[email]=21@def.com&prospect[club_id]=IHO003&prospect[type_id]=1&prospect[phone]=3334445656&prospect[address1]=123manst&prospect[source_id]=961dc42e-e89b-4b37-a797-b9cbb1ec2c67&prospect[dob]=10/27/1964&prospect[middle_name]=tom&prospect[owner_id]=25&prospect[gender]=male&prospect[misc]=hold for future",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"customers",
+						"leads"
+					],
+					"query": [
+						{
+							"key": "account",
+							"value": "31d896b2-996d-4abd-8d38-a69836a06ea1"
+						},
+						{
+							"key": "prospect[first_name]",
+							"value": "robert1"
+						},
+						{
+							"key": "prospect[last_name]",
+							"value": "roy21"
+						},
+						{
+							"key": "prospect[email]",
+							"value": "21@def.com"
+						},
+						{
+							"key": "prospect[club_id]",
+							"value": "IHO003"
+						},
+						{
+							"key": "prospect[type_id]",
+							"value": "1"
+						},
+						{
+							"key": "prospect[phone]",
+							"value": "3334445656"
+						},
+						{
+							"key": "prospect[address1]",
+							"value": "123manst"
+						},
+						{
+							"key": "prospect[source_id]",
+							"value": "961dc42e-e89b-4b37-a797-b9cbb1ec2c67"
+						},
+						{
+							"key": "prospect[dob]",
+							"value": "10/27/1964"
+						},
+						{
+							"key": "prospect[middle_name]",
+							"value": "tom"
+						},
+						{
+							"key": "prospect[owner_id]",
+							"value": "25"
+						},
+						{
+							"key": "prospect[gender]",
+							"value": "male"
+						},
+						{
+							"key": "prospect[misc]",
+							"value": "hold for future"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "17|840aJtrEPzqs6tovk1yKQ5RJbW8l2GksBahYB1Y3",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
+
+
+
