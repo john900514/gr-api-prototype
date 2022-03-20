@@ -10,4 +10,19 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class UtmTemplates extends Model
 {
     use SoftDeletes, Uuid;
+
+    protected $primaryKey = 'id';
+
+    protected $keyType = 'string';
+
+    public $incrementing = false;
+
+    protected $fillable = [
+        'utm_source',
+        'utm_medium',
+        'utm_campaign',
+        'utm_term',
+        'utm_content',
+        'active'
+    ];
 }
