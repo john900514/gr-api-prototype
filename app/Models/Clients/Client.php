@@ -78,6 +78,11 @@ class Client extends Model
         return $this->details()->whereDetail('service_slug')->whereActive(1);
     }
 
+    public function lead_reports_uuid()
+    {
+        return $this->detail()->whereDetail('lead-reports-uuid')->whereActive(1);
+    }
+
     /**
      * The "booted" method of the model.
      *

@@ -29,6 +29,7 @@ class LeadIntakeController extends Controller
             'prospect'            => 'bail|required|array',
             'prospect.first_name' => 'bail|required',
             'prospect.middle_name'=> 'sometimes|required',
+            'prospect.misc'       =>  'sometimes',
             'prospect.last_name'  => 'bail|required',
             'prospect.email'      => 'bail|required',
             'prospect.phone'      => 'sometimes|required',
@@ -41,7 +42,7 @@ class LeadIntakeController extends Controller
             'prospect.club_id'    => 'bail|required|exists:locations,gymrevenue_id',
             'prospect.source_id'  => 'bail|required|exists:lead_sources,id',
             'prospect.type_id'    => 'bail|required|exists:lead_types,id',
-            'prospect.owner_id'   => 'sometimes|required|exists:user,id',
+            'prospect.owner_id'   => 'sometimes|required|exists:users,id',
             'utm'                 => 'sometimes|required|array',
         ];
 

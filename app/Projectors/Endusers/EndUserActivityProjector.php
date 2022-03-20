@@ -2,6 +2,7 @@
 
 namespace App\Projectors\Endusers;
 
+use App\Jobs\Clients\Reporting\AssimilateLeadIntoReporting;
 use App\Models\Clients\Features\CommAudience;
 use App\Models\Clients\Features\Memberships\TrialMembershipType;
 use App\Models\Endusers\AudienceMember;
@@ -10,6 +11,7 @@ use App\Models\Endusers\LeadDetails;
 use App\Models\Endusers\TrialMembership;
 use App\Models\Note;
 use App\Models\User;
+use App\StorableEvents\Endusers\AdditionalLeadIntakeCaptured;
 use App\StorableEvents\Endusers\AgreementNumberCreatedForLead;
 use App\StorableEvents\Endusers\LeadClaimedByRep;
 use App\StorableEvents\Endusers\LeadDetailUpdated;
@@ -35,6 +37,7 @@ class EndUserActivityProjector extends Projector
             return in_array($key, (new Lead)->getFillable());
         }, ARRAY_FILTER_USE_KEY);
         $lead = Lead::create($lead_table_data);
+        $lead->update(['id' => $event->id]);
 
         LeadDetails::create([
             'lead_id' => $lead->id,
@@ -43,12 +46,63 @@ class EndUserActivityProjector extends Projector
             'value' => $lead->created_at
         ]);
 
+        // Intake Activity is used to track if a lead was already created and was captured again later
+        LeadDetails::create([
+            'lead_id' => $lead->id,
+            'client_id' => $lead->client_id,
+            'field' => 'intake-activity',
+            'value' => $lead->created_at,
+            'misc' => $event->lead
+        ]);
+
         LeadDetails::create([
             'lead_id' => $event->id,
             'client_id' => $lead->client_id,
             'field' => 'agreement_number',
-            'value' => floor(time()-99999999),
+            'value' => floor(time() - 99999999),
         ]);
+        if (!is_null($event->lead['dob'])) {
+            LeadDetails::create([
+                'lead_id' => $lead->id,
+                'client_id' => $lead->client_id,
+                'field' => 'dob',
+                'value' => $event->lead['dob'],
+            ]);
+        }
+        if (!is_null($event->lead['middle_name'])) {
+            LeadDetails::create([
+                'lead_id' => $lead->id,
+                'client_id' => $lead->client_id,
+                'field' => 'middle_name',
+                'value' => $event->lead['middle_name'],
+            ]);
+        }
+        LeadDetails::create([
+            'lead_id' => $lead->id,
+            'client_id' => $lead->client_id,
+            'field' => 'opportunity',
+            'value' => 'High'
+        ]);
+
+
+        if (!is_null($event->lead['owner_id'])) {
+            LeadDetails::create([
+                'lead_id' => $lead->id,
+                'client_id' => $lead->client_id,
+                'field' => 'claimed',
+                'value' => $event->lead['owner_id'],
+            ]);
+        }
+        if (!is_null($event->lead['misc'])) {
+            $created = LeadDetails::create([
+                'lead_id' => $lead->id,
+                'client_id' => $lead->client_id,
+                'field' => 'misc-props',
+                'value' => $event->lead['misc'],
+            ]);
+            var_dump($created->toArray());exit;
+        }
+
 
         foreach ($event->lead['details'] ?? [] as $field => $value) {
             LeadDetails::create([
@@ -60,6 +114,7 @@ class EndUserActivityProjector extends Projector
             );
         }
 
+        // @todo - deprecated, should remove soon
         foreach ($event->lead['services'] ?? [] as $service_id) {
             LeadDetails::create([
                     'lead_id' => $event->aggregateRootUuid(),
@@ -69,6 +124,42 @@ class EndUserActivityProjector extends Projector
                 ]
             );
         }
+
+        // From here we will queue and dispatch a job that will process
+        // the lead with Client Reporting
+        AssimilateLeadIntoReporting::dispatch(
+            $lead->client_id, $lead->id, $event->lead['gr_location_id'],
+            $event->lead['lead_source_id'], $event->lead['lead_type_id'],
+            $event->lead['utm'] ?? []
+        )->onQueue('gapi-' . env('APP_ENV') . '-jobs');
+    }
+
+    public function onAdditionalLeadIntakeCaptured(AdditionalLeadIntakeCaptured $event)
+    {
+        /**
+         * NOTE! - Because this is a lead being captured again, and not a lead's data being updated,
+         * it doesn't matter if the lead's data is different than in the record. Just log it and
+         * send it to reporting.
+         */
+        $lead = Lead::find($event->id);
+        // Intake Activity is used to track if a lead was already created and was captured again later
+        LeadDetails::create([
+            'lead_id' => $lead->id,
+            'client_id' => $lead->client_id,
+            'field' => 'intake-activity',
+            'value' => $lead->created_at,
+            'misc' => $event->lead
+        ]);
+
+
+        // From here we will queue and dispatch a job that will process
+        // the lead with Client Reporting
+        AssimilateLeadIntoReporting::dispatch(
+            $lead->client_id, $lead->id, $event->lead['gr_location_id'],
+            $event->lead['lead_source_id'], $event->lead['lead_type_id'],
+            $event->lead['utm'] ?? []
+        )->onQueue('gapi-' . env('APP_ENV') . '-jobs');
+
     }
 
     public function onManualLeadMade(ManualLeadMade $event)
@@ -90,7 +181,15 @@ class EndUserActivityProjector extends Projector
             'lead_id' => $event->id,
             'client_id' => $event->lead['client_id'],
             'field' => 'agreement_number',
-            'value' => floor(time()-99999999),
+            'value' => floor(time() - 99999999),
+        ]);
+
+        LeadDetails::create([
+            'lead_id' => $lead->id,
+            'client_id' => $lead->client_id,
+            'field' => 'dob',
+            'value' => $event->dob,
+            'misc' => [$event]
         ]);
     }
 
@@ -98,7 +197,7 @@ class EndUserActivityProjector extends Projector
     {
         $detail = LeadDetails::firstOrCreate([
             'lead_id' => $event->lead,
-            'client_id' =>  $event->client,
+            'client_id' => $event->client,
             'field' => $event->key,
         ]);
 
@@ -108,7 +207,8 @@ class EndUserActivityProjector extends Projector
         $detail->save();
     }
 
-    public function onAgreementNumberCreatedForLead(AgreementNumberCreatedForLead $event){
+    public function onAgreementNumberCreatedForLead(AgreementNumberCreatedForLead $event)
+    {
         LeadDetails::create([
             'lead_id' => $event->id,
             'client_id' => $event->client,
@@ -125,10 +225,10 @@ class EndUserActivityProjector extends Projector
         $lead->updateOrFail($event->lead);
 
         $notes = $event->lead['notes'] ?? false;
-        if($notes){
+        if ($notes) {
             Note::create([
-                'entity_id'=> $event->id,
-                'entity_type'=> Lead::class,
+                'entity_id' => $event->id,
+                'entity_type' => Lead::class,
                 'note' => $notes,
                 'created_by_user_id' => $event->user
             ]);
@@ -239,10 +339,10 @@ class EndUserActivityProjector extends Projector
         ]);
 
         $notes = $misc['notes'] ?? false;
-        if($notes){
+        if ($notes) {
             Note::create([
-                'entity_id'=> $event->lead,
-                'entity_type'=> Lead::class,
+                'entity_id' => $event->lead,
+                'entity_type' => Lead::class,
                 'note' => $notes,
                 'created_by_user_id' => $event->user
             ]);
