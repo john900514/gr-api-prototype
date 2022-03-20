@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use Database\Seeders\Clients\ClientAPIReportingSetupSeeder;
 use Database\Seeders\Clients\ClientUtmTemplateSeeder;
 use Database\Seeders\Users\APITokenSeeder;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -19,6 +20,7 @@ class DatabaseSeeder extends Seeder
     {
         VarDumper::dump('Seeding the DB with API-level dataz');
         $this->call(APITokenSeeder::class);
+        $this->call(ClientAPIReportingSetupSeeder::class);
         $this->call(ClientUtmTemplateSeeder::class);
     }
 }
