@@ -42,11 +42,14 @@ class CreateNewLead
             'lead_source_id' => $prospect_data['source_id']
         ];
 
-        // @todo - insert UTM, if in the request, here
         // Call the EndUserActivityAggregate and persists create New Lead
         try {
             $aggy = EndUserActivityAggregate::retrieve($new_lead_id)
                 ->createNewLead($payload);
+
+            if(array_key_exists('utm', $prospect_data)){
+                $aggy->processLeadUtms($prospect_data['utm'], $client_id);
+            }
 
             // @todo - if there is an owner attached - do the claimed lead event and logic
 

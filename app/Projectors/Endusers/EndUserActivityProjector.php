@@ -11,10 +11,13 @@ use App\Models\Endusers\LeadDetails;
 use App\Models\Endusers\TrialMembership;
 use App\Models\Note;
 use App\Models\User;
+use App\Models\Utms;
+use App\Models\UtmTemplates;
 use App\StorableEvents\Endusers\AdditionalLeadIntakeCaptured;
 use App\StorableEvents\Endusers\AgreementNumberCreatedForLead;
 use App\StorableEvents\Endusers\LeadClaimedByRep;
 use App\StorableEvents\Endusers\LeadDetailUpdated;
+use App\StorableEvents\Endusers\LeadUtmsProcessed;
 use App\StorableEvents\Endusers\LeadWasCalledByRep;
 use App\StorableEvents\Endusers\LeadWasDeleted;
 use App\StorableEvents\Endusers\LeadWasEmailedByRep;
@@ -25,7 +28,7 @@ use App\StorableEvents\Endusers\SubscribedToAudience;
 use App\StorableEvents\Endusers\TrialMembershipAdded;
 use App\StorableEvents\Endusers\TrialMembershipUsed;
 use App\StorableEvents\Endusers\UpdateLead;
-use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 use Spatie\EventSourcing\EventHandlers\Projectors\Projector;
 
 class EndUserActivityProjector extends Projector
@@ -100,7 +103,6 @@ class EndUserActivityProjector extends Projector
                 'field' => 'misc-props',
                 'value' => $event->lead['misc'],
             ]);
-            var_dump($created->toArray());exit;
         }
 
 
@@ -435,5 +437,34 @@ class EndUserActivityProjector extends Projector
             'value' => $event->trial,
             'misc' => ['trial_id' => $event->trial, 'date' => $event->date, 'client' => $event->client]
         ]);
+    }
+
+    public function onLeadUtmsProcessed(LeadUtmsProcessed $event)
+    {
+
+        $utm_template = UtmTemplates::whereClientId($event->client)
+            ->whereUtmSource($event->payload['utm_source'])
+            ->whereUtmCampaign($event->payload['utm_campaign'])
+            ->whereUtmMedium($event->payload['utm_medium'])
+            ->first();
+
+        $utm_template_id = null;
+        $utm_template_id = $utm_template?->id;
+
+        Log::debug('$utm_template_id');
+        Log::debug($utm_template_id);
+
+
+        Utms::create([
+            'client_id' => $event->client,
+            'entity_name' => Lead::class,
+            'entity_id' => $event->aggregateRootUuid(),
+            'utm_template_id' => $utm_template_id,
+            'source' => $event->payload['utm_source'],
+            'campaign' => $event->payload['utm_campaign'],
+            'medium' => $event->payload['utm_medium'],
+            'capture_date' => $event->createdAt()
+        ]);
+
     }
 }

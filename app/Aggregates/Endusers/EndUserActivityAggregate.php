@@ -6,6 +6,7 @@ use App\Models\User;
 use App\StorableEvents\Endusers\AdditionalLeadIntakeCaptured;
 use App\StorableEvents\Endusers\AgreementNumberCreatedForLead;
 use App\StorableEvents\Endusers\LeadDetailUpdated;
+use App\StorableEvents\Endusers\LeadUtmsProcessed;
 use App\StorableEvents\Endusers\TrialMembershipAdded;
 use App\StorableEvents\Endusers\TrialMembershipUsed;
 use App\StorableEvents\Endusers\LeadWasCalledByRep;
@@ -30,6 +31,7 @@ class EndUserActivityAggregate extends AggregateRoot
     protected int $interaction_emailed_count = 0;
     protected int $interaction_text_messaged_count = 0;
     public array $trial_dates = [];
+    protected array $utms = [];
 
     public function getInteractionCount(): array
     {
@@ -61,6 +63,11 @@ class EndUserActivityAggregate extends AggregateRoot
     public function applyNewLeadMade(NewLeadMade $event)
     {
         $this->lead = $event->lead;
+    }
+
+    public function applyLeadUtmsProcessed(LeadUtmsProcessed $event)
+    {
+        $this->utms[] = $event->payload;
     }
 
     public function applyTrialMembershipUsed(TrialMembershipUsed $event){
@@ -164,5 +171,10 @@ class EndUserActivityAggregate extends AggregateRoot
     public function getLeadData() : array
     {
         return $this->lead;
+    }
+
+    public function processLeadUtms(array $payload, string $client){
+        $this->recordThat(new LeadUtmsProcessed($payload, $client));
+        return $this;
     }
 }
