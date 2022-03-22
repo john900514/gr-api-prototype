@@ -41,7 +41,6 @@ class AdditionalIntakeToExistingLead
             try {
                 $aggy = EndUserActivityAggregate::retrieve($lead_id)
                     ->addAdditionalLeadIntakeActivity($payload);
-
                 // @todo - insert additional events to log here.
                 $aggy->persist();
                 $results = $lead_id;

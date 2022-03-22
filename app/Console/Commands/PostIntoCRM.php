@@ -55,7 +55,7 @@ class PostIntoCRM extends Command
             }while($random_lead_source->name == 'Custom');
             $this->info('Generated Lead Source - '. $random_lead_source->name);
 
-            // From that lead source get a random lead type
+            // From that client get a random lead type
             $random_lead_type = $rando_clientrissian->lead_types()->orderBy(DB::raw('RAND()'))->first();
             $this->info('Generated Lead Type - '. $random_lead_type->name);
 

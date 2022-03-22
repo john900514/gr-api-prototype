@@ -51,8 +51,10 @@ class CreateNewLead
                 $aggy->processLeadUtms($prospect_data['utm'], $client_id);
             }
 
+            $aggy = $aggy->joinAudience('prospects', $payload['client_id'], Lead::class);
+            // @todo - insert trial membership if lead is a guest pass or free trial lead type
+            //$aggy->addTrialMembership($client->id, $trial_id, $date_started);
             // @todo - if there is an owner attached - do the claimed lead event and logic
-
             $aggy->persist();
             $results = $new_lead_id;
         }
