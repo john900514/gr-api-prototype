@@ -2,14 +2,9 @@
 
 namespace App\Actions\Customers\UTM;
 
-use App\Aggregates\Clients\CalendarAggregate;
-use App\Aggregates\ClientUTMs\ClientUTMAggregate;
-use App\Models\CalendarEvent;
-use App\Models\CalendarEventType;
-use App\Models\UtmTemplates;
+use App\Aggregates\Clients\UTMs\ClientUTMAggregate;
 use Lorisleiva\Actions\ActionRequest;
 use Lorisleiva\Actions\Concerns\AsAction;
-use Prologue\Alerts\Facades\Alert;
 use Ramsey\Uuid\Uuid;
 
 
@@ -45,16 +40,21 @@ class CreateUtmTemplate
             ->createUtmTemplate($data, $user)
             ->persist();
 
-        return UtmTemplates::findOrFail($id);
+        //return UtmTemplates::findOrFail($id);
+        return $data['id'];
     }
 
     public function asController(ActionRequest $request)
     {
-
         return $this->handle(
             $request->validated(),
             $request->user()
         );
+    }
+
+    public function jsonResponse($result)
+    {
+
     }
 
 }

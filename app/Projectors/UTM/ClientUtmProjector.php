@@ -9,7 +9,7 @@ use Spatie\EventSourcing\EventHandlers\Projectors\Projector;
 
 class ClientUtmProjector extends Projector
 {
-    public function onNewLeadMade(UtmTemplateCreated $event)
+    public function onUtmTemplateCreated(UtmTemplateCreated $event)
     {
         UtmTemplates::create(array_merge($event->payload, [
             'client_id' => $event->aggregateRootUuid(),

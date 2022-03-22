@@ -40,6 +40,7 @@ class ClientUtmTemplateSeeder extends Seeder
             'utm_campaign' => 'social5',
             'utm_medium' => 'test-promo5'
         ],
+        // @todo - make more UTMS
 //        [
 //            'utm_source' => '',
 //            'utm_campaign' => '',
