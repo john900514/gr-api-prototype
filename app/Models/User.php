@@ -60,4 +60,9 @@ class User extends Authenticatable
     {
         return $this->detail()->where('name', '=', 'associated_client');
     }
+
+    public function api_token()
+    {
+        return $this->detail()->where('name', '=', 'api-token');
+    }
 }

@@ -30,22 +30,22 @@ class Client extends Model
 
     public function locations()
     {
-        return $this->hasMany(Location::class);
+        return $this->hasMany(Location::class,'client_id', 'id');
     }
 
     public function details()
     {
-        return $this->hasMany(ClientDetail::class);
+        return $this->hasMany(ClientDetail::class,'client_id', 'id');
     }
 
     public function lead_types()
     {
-        return $this->hasMany(LeadType::class);
+        return $this->hasMany(LeadType::class, 'client_id', 'id');
     }
 
     public function lead_sources()
     {
-        return $this->hasMany(LeadSource::class);
+        return $this->hasMany(LeadSource::class, 'client_id', 'id');
     }
 
     public function membership_types()

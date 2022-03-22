@@ -2,13 +2,19 @@
 
 namespace App\Console\Commands;
 
+use Bouncer;
 use App\Aggregates\Endusers\EndUserActivityAggregate;
 use App\Models\Clients\Client;
 use App\Models\Endusers\Lead;
 use App\Models\Endusers\LeadDetails;
+use App\Models\Endusers\LeadSource;
+use App\Models\User;
+use App\Models\UserDetails;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 use Symfony\Component\VarDumper\VarDumper;
 
 class PostIntoCRM extends Command
@@ -18,14 +24,14 @@ class PostIntoCRM extends Command
      *
      * @var string
      */
-    protected $signature = 'postintocrm:cron';
+    protected $signature = 'leads:random';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'Creates a Random dummy Lead for a random client. Schedule to run frequently to "simulate" real-world activity';
 
     /**
      * Execute the console command.
@@ -34,9 +40,124 @@ class PostIntoCRM extends Command
      */
     public function handle()
     {
-        //      return 0;
+        // Pick a # between 1 and ten, that's now many times we're gonna do this
+        $times_to_run_through_simulation = rand(1, 10);
+        do
+        {
+            // Get a random client
+            $rando_clientrissian = Client::orderBy(DB::raw('RAND()'))->first();
+            $this->warn(' Today\'s Rando - '. $rando_clientrissian->name);
+
+            // From that client, get a random lead source
+            do {
+                $random_lead_source = $rando_clientrissian->lead_sources()->orderBy(DB::raw('RAND()'))->first();
+                // (custom generated lead sources will be retried)
+            }while($random_lead_source->name == 'Custom');
+            $this->info('Generated Lead Source - '. $random_lead_source->name);
+
+            // From that lead source get a random lead type
+            $random_lead_type = $rando_clientrissian->lead_types()->orderBy(DB::raw('RAND()'))->first();
+            $this->info('Generated Lead Type - '. $random_lead_type->name);
+
+            //  From that client, get a random location
+            $random_location = $rando_clientrissian->locations()->orderBy(DB::raw('RAND()'))->first();
+            $this->info('Generated Club - '. $random_lead_type->name);
+
+            // @todo - Flip a coin, if true, attach a UTM, from a template attached to that client
+            if(rand(0,1) == 1)
+            {
+                $this->error('UTM Processing Not Ready!');
+            }
+
+            // @todo - Flip a coin, if true, attach a lead owner attached to that client
+            if(rand(0,1) == 1)
+            {
+                $this->error('Lead Owner association Not Ready!');
+            }
+
+            // @todo - Flip a coin, if true, attach factory secondary details about the lead
+            if(rand(0,1) == 1)
+            {
+                $this->error('Skipping Secondary Details because frankly my dear, i just don\'t feel like it!');
+            }
+
+            // Get a user who is an Account Owner for the client
+            if($user = $this->getAuthorizedUser($rando_clientrissian))
+            {
+                $this->info('User whose token we are using - '. $user->name);
+
+                // Get that user's API Access Token
+                $its_pat = $user->api_token()->first();
+
+                if($its_pat)
+                {
+
+                    // Factory a Random First Last Email and Phone
+                    $prospect = Lead::factory()->count(1)
+                        // over ride the client id and gr id from the factory
+                        ->client_id($rando_clientrissian->id)
+                        ->gr_location_id($random_location->gymrevenue_id)
+                        ->make()->first();
+
+                    // Prepare the Payload
+                    $payload = [
+                        'account'  => $rando_clientrissian->id,
+                        'prospect' => [
+                            'first_name' => $prospect->first_name,
+                            //'middle_name'=> 'sometimes|required',
+                            //'misc'       =>  'sometimes',
+                            'last_name'  => $prospect->last_name,
+                            'email'      => $prospect->email,
+                            'phone'      => $prospect->primary_phone,
+                            //'alt_phone'  => 'sometimes',
+                            //'address1'   => 'sometimes|required',
+                            //'address2'   => 'sometimes',
+                            'gender'     => $prospect->gender,
+                            //'dob'        => 'sometimes',
+                            'ip'         => $prospect->ip_address,
+                            'club_id'    => $random_location->gymrevenue_id,
+                            'source_id'  => $random_lead_source->id,
+                            'type_id'    => $random_lead_type->id,
+                            //'prospect.owner_id'   => 'sometimes|required|exists:users,id',
+                        ]
+                        //'utm'                 => 'sometimes|required|array',
+                    ];
+
+                    $headers = [
+                        'Accept' => 'application/json',
+                        'Content-Type' => 'application/json',
+                        'Authorization' => "Bearer ".base64_decode($its_pat->value)
+                    ];
+
+                    try {
+                        $url = env('APP_URL').'/api/customers/leads';
+                        $this->info('sending to '.$url);
+                        // Use Laravel's Built in HTTP to call the lead intake endpoint.
+                        Http::withHeaders($headers)->post($url, $payload);
+                        //All Done!
+                    }
+                    catch(\Exception $e)
+                    {
+                        $this->warn('Peep  this error - '. $e->getMessage());
+                    }
+                }
+                else
+                {
+                    $this->error('This user does not have an API access token for some reason. Ever left your wallet in the car with a big line waiting on you? It\'s a bit like that.');
+                }
+            }
+            else
+            {
+                $this->error("Could not find an authorized user for {$rando_clientrissian->name}. It's like they skipped our turn in Uno.");
+            }
+
+            // Counting down the iterations till we're done.
+            $times_to_run_through_simulation--;
+        } while($times_to_run_through_simulation > 0);
 
 
+
+        /*
         // Get all the Clients
         $clients = Client::whereActive(1)
             ->with('locations')
@@ -107,5 +228,38 @@ class PostIntoCRM extends Command
                 }
             }
         }
+        */
+    }
+
+    private function getAuthorizedUser(Client $client) : User|false
+    {
+        $results = false;
+
+        // Grabbing users associated with the client
+        $user_details_of_associated_client = UserDetails::where('name', '=', 'associated_client')
+            ->whereValue($client->id)->get();
+
+        if(count($user_details_of_associated_client) > 0)
+        {
+            foreach ($user_details_of_associated_client as $detail_record)
+            {
+                $user = User::find($detail_record->user_id);
+                if(!is_null($user))
+                {
+                    if(Bouncer::is($user)->an('Account Owner'))
+                    {
+                        $results = $user;
+                        break;
+                    }
+                }
+            }
+
+        }
+        else
+        {
+            $this->warn("No users attached to client {$client->name}. This is the equivalent of losing a life in Mario.");
+        }
+
+        return $results;
     }
 }
