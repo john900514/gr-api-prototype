@@ -42,16 +42,16 @@ class LeadProspectSeeder extends Seeder
                     // For each client location, factory up some leads
                     foreach ($client->locations as $idx => $location)
                     {
-                        $prospects = Lead::factory()->count(50)
+                        $prospects = Lead::factory()->count(10)
                             ->client_id($client->id)
                             ->gr_location_id($location->gymrevenue_id)
                             ->make();
 
                         VarDumper::dump("Generating Leads for {$client->name} @ {$location->name}!");
 
-                        foreach ($prospects as $prospect)
+                        foreach ($prospects as $idx => $prospect)
                         {
-                            VarDumper::dump('Random Lead - '.$prospect->email);
+                            VarDumper::dump($idx.' Random Lead - '.$prospect->email);
                             // From that lead source get a random lead type
                             $random_lead_type = $client->lead_types()->orderBy(DB::raw('RAND()'))->first();
                             do {
@@ -109,14 +109,15 @@ class LeadProspectSeeder extends Seeder
                                     try {
                                         $url = env('APP_URL').'/api/customers/leads';
                                         // Use Laravel's Built in HTTP to call the lead intake endpoint.
-                                        Http::withHeaders($headers)->post($url, $payload);
+                                        $response = Http::withHeaders($headers)->post($url, $payload);
+                                        // @todo - fail if 500, because repeated attempts will waste time
 
                                         // @todo - retrieve the lead and continue running processing on it.
                                         // @todo - if free trial lead, run sim on the lead using their pass a few times.
                                     }
                                     catch(\Exception $e)
                                     {
-                                        $this->warn('Peep  this error - '. $e->getMessage());
+                                        dd('Peep  this error - '. $e->getMessage());
                                     }
                                 }
                                 else
