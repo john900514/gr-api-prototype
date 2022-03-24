@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         VarDumper::dump('Seeding the DB with API-level dataz');
+        $this->call(AppStateSeeder::class);
         $this->call(APITokenSeeder::class);
         $this->call(ClientAPIReportingSetupSeeder::class);
         $this->call(ClientUtmTemplateSeeder::class);
