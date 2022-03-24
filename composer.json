@@ -22,10 +22,10 @@
         "predis/predis": "^1.1",
         "silber/bouncer": "^1.0",
         "spatie/laravel-event-sourcing": "^7.2",
-        "twilio/sdk": "^6.35"
+        "twilio/sdk": "^6.35",
+        "fakerphp/faker": "^1.9.1"
     },
     "require-dev": {
-        "fakerphp/faker": "^1.9.1",
         "laravel/sail": "^1.0.1",
         "mockery/mockery": "^1.4.4",
         "nunomaduro/collision": "^6.1",

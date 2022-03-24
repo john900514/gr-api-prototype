@@ -61,7 +61,7 @@ class PostIntoCRM extends Command
 
             //  From that client, get a random location
             $random_location = $rando_clientrissian->locations()->orderBy(DB::raw('RAND()'))->first();
-            $this->info('Generated Club - '. $random_lead_type->name);
+            $this->info('Generated Club - '. $random_location->name);
 
             // @todo - Flip a coin, if true, attach a UTM, from a template attached to that client
             if(rand(0,1) == 1)
