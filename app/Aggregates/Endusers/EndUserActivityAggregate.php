@@ -5,6 +5,7 @@ namespace App\Aggregates\Endusers;
 use App\Models\User;
 use App\StorableEvents\Endusers\AdditionalLeadIntakeCaptured;
 use App\StorableEvents\Endusers\AgreementNumberCreatedForLead;
+use App\StorableEvents\Endusers\LeadCreated;
 use App\StorableEvents\Endusers\LeadDetailUpdated;
 use App\StorableEvents\Endusers\LeadUtmsProcessed;
 use App\StorableEvents\Endusers\TrialMembershipAdded;
@@ -65,6 +66,11 @@ class EndUserActivityAggregate extends AggregateRoot
         $this->lead = $event->lead;
     }
 
+    public function applyLeadCreated(LeadCreated $event)
+    {
+        $this->lead = $event->lead;
+    }
+
     public function applyLeadUtmsProcessed(LeadUtmsProcessed $event)
     {
         $this->utms[] = $event->payload;
@@ -80,7 +86,13 @@ class EndUserActivityAggregate extends AggregateRoot
 
         return $this;
     }
+    public function createLead(array $lead)
+    {
+       // $data = $lead;
+        $this->recordThat(new LeadCreated($this->uuid(), $lead));
 
+        return $this;
+    }
     public function addAdditionalLeadIntakeActivity(array $lead)
     {
         $this->recordThat(new AdditionalLeadIntakeCaptured($this->uuid(), $lead));

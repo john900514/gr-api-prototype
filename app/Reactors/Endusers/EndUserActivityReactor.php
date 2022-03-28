@@ -7,6 +7,7 @@ use App\Mail\EndUser\EmailFromRep;
 use App\Models\Endusers\Lead;
 use App\Models\Endusers\LeadDetails;
 use App\Models\Utility\AppState;
+use App\StorableEvents\Endusers\LeadCreated;
 use App\StorableEvents\Endusers\LeadWasEmailedByRep;
 use App\StorableEvents\Endusers\LeadWasTextMessagedByRep;
 use App\StorableEvents\Endusers\NewLeadMade;
@@ -48,6 +49,30 @@ class EndUserActivityReactor extends Reactor implements ShouldQueue
         // @todo - dispatch a queued job that will apply that to all tracking reporting aggies.
 
     }
+
+    public function onLeadCreated(LeadCreated $event)
+    {
+        if(array_key_exists('profile_picture', $event->lead)){
+            $file = $event->lead['profile_picture'];
+            $destKey = "{$event->lead['client_id']}/{$file['uuid']}";
+            Storage::disk('s3')->move($file['key'], $destKey);
+            $file['key'] = $destKey;
+            $file['url'] = "https://{$file['bucket']}.s3.amazonaws.com/{$file['key']}";
+
+            LeadDetails::create([
+                    'lead_id' => $event->lead['id'],
+                    'client_id' => $event->lead['client_id'],
+                    'field' => 'profile_picture',
+                    'misc' => $file
+                ]
+            );
+        }
+
+
+        // @todo - dispatch a queued job that will apply that to all tracking reporting aggies.
+
+    }
+
 
     public function onUpdateLead(UpdateLead $event)
     {

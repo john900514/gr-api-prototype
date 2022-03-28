@@ -107,7 +107,8 @@ class LeadProspectSeeder extends Seeder
                                     ];
 
                                     try {
-                                        $url = env('APP_URL').'/api/customers/leads';
+                                     //   $url = env('APP_URL').'/api/customers/leads';
+                                        $url = 'http://127.0.0.1:8000//api/customers/leads';
                                         // Use Laravel's Built in HTTP to call the lead intake endpoint.
                                         $response = Http::withHeaders($headers)->post($url, $payload);
                                         // @todo - fail if 500, because repeated attempts will waste time

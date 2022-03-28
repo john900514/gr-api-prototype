@@ -16,6 +16,7 @@ use App\Models\UtmTemplates;
 use App\StorableEvents\Endusers\AdditionalLeadIntakeCaptured;
 use App\StorableEvents\Endusers\AgreementNumberCreatedForLead;
 use App\StorableEvents\Endusers\LeadClaimedByRep;
+use App\StorableEvents\Endusers\LeadCreated;
 use App\StorableEvents\Endusers\LeadDetailUpdated;
 use App\StorableEvents\Endusers\LeadUtmsProcessed;
 use App\StorableEvents\Endusers\LeadWasCalledByRep;
@@ -33,7 +34,7 @@ use Spatie\EventSourcing\EventHandlers\Projectors\Projector;
 
 class EndUserActivityProjector extends Projector
 {
-    public function onNewLeadMade(NewLeadMade $event)
+    public function onLeadCreated(LeadCreated $event)
     {
         //get only the keys we care about (the ones marked as fillable)
         $lead_table_data = array_filter($event->lead, function ($key) {
@@ -136,6 +137,110 @@ class EndUserActivityProjector extends Projector
         )->onQueue('gapi-' . env('APP_ENV') . '-jobs');
     }
 
+/*
+    public function onNewLeadMade(NewLeadMade $event)
+    {
+        //get only the keys we care about (the ones marked as fillable)
+        $lead_table_data = array_filter($event->lead, function ($key) {
+            return in_array($key, (new Lead)->getFillable());
+        }, ARRAY_FILTER_USE_KEY);
+        $lead = Lead::create($lead_table_data);
+        $lead->update(['id' => $event->id]);
+
+        LeadDetails::create([
+            'lead_id' => $lead->id,
+            'client_id' => $lead->client_id,
+            'field' => 'created',
+            'value' => $lead->created_at
+        ]);
+
+        // Intake Activity is used to track if a lead was already created and was captured again later
+        LeadDetails::create([
+            'lead_id' => $lead->id,
+            'client_id' => $lead->client_id,
+            'field' => 'intake-activity',
+            'value' => $lead->created_at,
+            'misc' => $event->lead
+        ]);
+
+        LeadDetails::create([
+            'lead_id' => $event->id,
+            'client_id' => $lead->client_id,
+            'field' => 'agreement_number',
+            'value' => floor(time() - 99999999),
+        ]);
+        if (!is_null($event->lead['dob'])) {
+            LeadDetails::create([
+                'lead_id' => $lead->id,
+                'client_id' => $lead->client_id,
+                'field' => 'dob',
+                'value' => $event->lead['dob'],
+            ]);
+        }
+        if (!is_null($event->lead['middle_name'])) {
+            LeadDetails::create([
+                'lead_id' => $lead->id,
+                'client_id' => $lead->client_id,
+                'field' => 'middle_name',
+                'value' => $event->lead['middle_name'],
+            ]);
+        }
+        LeadDetails::create([
+            'lead_id' => $lead->id,
+            'client_id' => $lead->client_id,
+            'field' => 'opportunity',
+            'value' => 'High'
+        ]);
+
+
+        if (!is_null($event->lead['owner_id'])) {
+            LeadDetails::create([
+                'lead_id' => $lead->id,
+                'client_id' => $lead->client_id,
+                'field' => 'claimed',
+                'value' => $event->lead['owner_id'],
+            ]);
+        }
+        if (!is_null($event->lead['misc'])) {
+            $created = LeadDetails::create([
+                'lead_id' => $lead->id,
+                'client_id' => $lead->client_id,
+                'field' => 'misc-props',
+                'value' => $event->lead['misc'],
+            ]);
+        }
+
+
+        foreach ($event->lead['details'] ?? [] as $field => $value) {
+            LeadDetails::create([
+                    'lead_id' => $event->aggregateRootUuid(),
+                    'client_id' => $lead->client_id,
+                    'field' => $field,
+                    'value' => $value
+                ]
+            );
+        }
+
+        // @todo - deprecated, should remove soon
+        foreach ($event->lead['services'] ?? [] as $service_id) {
+            LeadDetails::create([
+                    'lead_id' => $event->aggregateRootUuid(),
+                    'client_id' => $lead->client_id,
+                    'field' => 'service_id',
+                    'value' => $service_id
+                ]
+            );
+        }
+
+        // From here we will queue and dispatch a job that will process
+        // the lead with Client Reporting
+        AssimilateLeadIntoReporting::dispatch(
+            $lead->client_id, $lead->id, $event->lead['gr_location_id'],
+            $event->lead['lead_source_id'], $event->lead['lead_type_id'],
+            $event->lead['utm'] ?? []
+        )->onQueue('gapi-' . env('APP_ENV') . '-jobs');
+    }
+*/
     public function onAdditionalLeadIntakeCaptured(AdditionalLeadIntakeCaptured $event)
     {
         /**

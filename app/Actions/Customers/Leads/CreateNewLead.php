@@ -45,7 +45,7 @@ class CreateNewLead
         // Call the EndUserActivityAggregate and persists create New Lead
         try {
             $aggy = EndUserActivityAggregate::retrieve($new_lead_id)
-                ->createNewLead($payload);
+                ->createLead($payload);
 
             if(array_key_exists('utm', $prospect_data)){
                 $aggy->processLeadUtms($prospect_data['utm'], $client_id);

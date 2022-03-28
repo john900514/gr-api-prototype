@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Customers\Leads;
 
 use App\Actions\Customers\Leads\CreateNewLead;
+use App\Actions\Endusers\CreateLead;
 use App\Models\Clients\Location;
 use App\Models\Endusers\LeadSource;
 use App\Models\Endusers\LeadType;
@@ -144,7 +145,7 @@ class LeadIntakeController extends Controller
         $code = 500;
 
         //If it returns a string, send back the string and 200
-        if ($new_lead_uuid = CreateNewLead::run($data['account'], $data['prospect']))
+        if ($new_lead_uuid = CreateLead::run($data['account'], $data['prospect']))
         {
             $results = ['success' => true, 'lead' => $new_lead_uuid];
             $code = 200;
