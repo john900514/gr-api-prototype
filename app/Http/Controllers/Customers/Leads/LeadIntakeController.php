@@ -12,6 +12,7 @@ use Bouncer;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+//use Silber\Bouncer\Bouncer;
 
 class LeadIntakeController extends Controller
 {
@@ -147,8 +148,11 @@ class LeadIntakeController extends Controller
         //If it returns a string, send back the string and 200
         if ($new_lead_uuid = CreateLead::run($data['account'], $data['prospect']))
         {
+
+
             $results = ['success' => true, 'lead' => $new_lead_uuid];
             $code = 200;
+        //    echo response->json;
         }
         else
         {

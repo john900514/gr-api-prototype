@@ -74,6 +74,8 @@ class CreateLead
 
         $new_lead_id = Uuid::new();//we should use uuid here
 
+//var_dump('what is '.$new_lead_id);
+//die;
         $payload = [
             'client_id' => $client_id,
             'first_name' => $prospect_data['first_name'],

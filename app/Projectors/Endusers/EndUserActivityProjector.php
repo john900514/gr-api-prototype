@@ -41,6 +41,9 @@ class EndUserActivityProjector extends Projector
             return in_array($key, (new Lead)->getFillable());
         }, ARRAY_FILTER_USE_KEY);
         $lead = Lead::create($lead_table_data);
+
+//dd($lead_table_data);
+
         $lead->update(['id' => $event->id]);
 
         LeadDetails::create([

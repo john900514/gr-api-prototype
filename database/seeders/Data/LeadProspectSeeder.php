@@ -11,6 +11,7 @@ use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
+//use Silber\Bouncer\Bouncer;
 use Symfony\Component\VarDumper\VarDumper;
 
 class LeadProspectSeeder extends Seeder
@@ -75,6 +76,7 @@ class LeadProspectSeeder extends Seeder
                             {
                                 // Get that user's API Access Token
                                 $its_pat = $user->api_token()->first();
+                    //            var_dump('is pat '.$its_pat);
                                 if($its_pat)
                                 {
                                     $payload = [
@@ -107,14 +109,18 @@ class LeadProspectSeeder extends Seeder
                                     ];
 
                                     try {
-                                     //   $url = env('APP_URL').'/api/customers/leads';
-                                        $url = 'http://127.0.0.1:8000//api/customers/leads';
+                                        $url = env('APP_URL').'/api/customers/leads';
+                                     //   $url = 'http://127.0.0.1:8000/api/customers/leads';
                                         // Use Laravel's Built in HTTP to call the lead intake endpoint.
                                         $response = Http::withHeaders($headers)->post($url, $payload);
                                         // @todo - fail if 500, because repeated attempts will waste time
 
                                         // @todo - retrieve the lead and continue running processing on it.
                                         // @todo - if free trial lead, run sim on the lead using their pass a few times.
+//var_dump($url);
+// var_dump($payload);
+// die;
+
                                     }
                                     catch(\Exception $e)
                                     {

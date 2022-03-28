@@ -130,8 +130,9 @@ class PostIntoCRM extends Command
                     ];
 
                     try {
-                   //     $url = env('APP_URL').'/api/customers/leads';
-                        $url = 'http://127.0.0.1:8000/api/customers/leads';
+                        $url = env('APP_URL').'/api/customers/leads';
+                    //    $url = 'http://127.0.0.1:8000/api/customers/leads';
+
                         $this->info('sending to '.$url);
                         // Use Laravel's Built in HTTP to call the lead intake endpoint.
                         Http::withHeaders($headers)->post($url, $payload);
