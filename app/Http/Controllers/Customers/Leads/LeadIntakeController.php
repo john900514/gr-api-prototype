@@ -108,6 +108,7 @@ class LeadIntakeController extends Controller
                             }
                             else
                             {
+
                                 // Once everything is all good and well, Run processValidLead and return its results
                                 return $this->processValidLead(request()->all());
                             }
@@ -143,9 +144,11 @@ class LeadIntakeController extends Controller
         $results = ['success' => false];
         $code = 500;
 
+
         //If it returns a string, send back the string and 200
         if ($new_lead_uuid = CreateNewLead::run($data['account'], $data['prospect']))
         {
+
             $results = ['success' => true, 'lead' => $new_lead_uuid];
             $code = 200;
         }

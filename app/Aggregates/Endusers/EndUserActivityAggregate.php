@@ -5,6 +5,7 @@ namespace App\Aggregates\Endusers;
 use App\Models\User;
 use App\StorableEvents\Endusers\AdditionalLeadIntakeCaptured;
 use App\StorableEvents\Endusers\AgreementNumberCreatedForLead;
+use App\StorableEvents\Endusers\LeadCreated;
 use App\StorableEvents\Endusers\LeadDetailUpdated;
 use App\StorableEvents\Endusers\LeadUtmsProcessed;
 use App\StorableEvents\Endusers\TrialMembershipAdded;
@@ -74,13 +75,18 @@ class EndUserActivityAggregate extends AggregateRoot
         $this->trial_dates[] = $event->date;
     }
 
+    public function createNewLead(array $lead, string $userId = 'Auto Generated')
+    {
+        $this->recordThat(new LeadCreated($userId, $lead));
+        return $this;
+    }
+/*
     public function createNewLead(array $lead)
     {
         $this->recordThat(new NewLeadMade($this->uuid(), $lead));
-
         return $this;
     }
-
+*/
     public function addAdditionalLeadIntakeActivity(array $lead)
     {
         $this->recordThat(new AdditionalLeadIntakeCaptured($this->uuid(), $lead));
